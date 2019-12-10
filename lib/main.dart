@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mokuteki_screening/creature.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,8 +16,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Center(
-        child: Text('hello world!'),
+        child: Creature(),
       ),
     );
   }
