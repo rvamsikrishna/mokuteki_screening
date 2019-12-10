@@ -14,7 +14,7 @@ class Creature extends StatefulWidget {
   const Creature({
     Key key,
     this.color = Colors.white,
-    this.size = 20.0,
+    this.size = 40.0,
   })  : assert(size >= 20.0),
         super(key: key);
   @override
@@ -26,6 +26,7 @@ class Creature extends StatefulWidget {
 class CreatureState extends State<Creature> with TickerProviderStateMixin {
   final RandomColor _randomColor = RandomColor();
 
+  bool wiggle = false;
   AnimationController _creatureAnimController;
   double _radius;
   List<Offset> _points = [];
@@ -42,9 +43,9 @@ class CreatureState extends State<Creature> with TickerProviderStateMixin {
     _creatureAnimController = AnimationController(
       duration: Duration(milliseconds: 1),
       vsync: this,
-    )..addListener(_addCreaturePoints);
+    );
 
-    _creatureAnimController.repeat();
+    // _creatureAnimController.repeat();
 
     _colorAnimationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500))
@@ -72,7 +73,7 @@ class CreatureState extends State<Creature> with TickerProviderStateMixin {
         var x = r * math.cos(angle);
         var y = r * math.sin(angle);
         xoff += 0.2;
-        _points.add(Offset(x + widget.size, y + widget.size));
+        _points.add(Offset(x + _radius, y + _radius));
       }
 
       _yoff += 0.01;
@@ -111,23 +112,40 @@ class CreatureState extends State<Creature> with TickerProviderStateMixin {
       width: 2 * widget.size,
       height: 2 * widget.size,
       child: GestureDetector(
+        onScaleStart: (ScaleStartDetails d) {},
+        onScaleUpdate: (ScaleUpdateDetails d) {
+          if (_radius < 20.0 ||
+              _radius >= MediaQuery.of(context).size.width - 20.0) return;
+
+          setState(() {
+            _radius = _radius * d.scale;
+          });
+        },
         onTap: () {
-          _changeColor(_colorAnimation.value, _randomColor.randomColor());
+          _startWiggle();
         },
         onDoubleTap: () {
+          _changeColor(
+              _colorAnimation.value,
+              _randomColor.randomColor(
+                colorSaturation: ColorSaturation.highSaturation,
+              ));
+        },
+        onLongPress: () {
           if (_colorShiftingTimer == null) {
             _colorShiftingTimer =
                 Timer.periodic(Duration(milliseconds: 500), (Timer t) {
-              _changeColor(_colorAnimation.value, _randomColor.randomColor());
+              _changeColor(
+                  _colorAnimation.value,
+                  _randomColor.randomColor(
+                    colorSaturation: ColorSaturation.highSaturation,
+                  ));
             });
           } else {
             _colorShiftingTimer.cancel();
             _colorShiftingTimer = null;
             _colorAnimationController.stop();
           }
-          // // setState(() {
-          //   _discoColors = !_discoColors;
-          // // });
         },
         child: CustomPaint(
           painter: CreaturePainter(
@@ -137,6 +155,18 @@ class CreatureState extends State<Creature> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  void _startWiggle() {
+    if (!wiggle) {
+      wiggle = true;
+      _creatureAnimController.addListener(_addCreaturePoints);
+      _creatureAnimController.repeat();
+    } else {
+      _creatureAnimController.removeListener(_addCreaturePoints);
+      _colorAnimationController.stop();
+      wiggle = false;
+    }
   }
 }
 
@@ -148,11 +178,19 @@ class CreaturePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Path path = Path();
-    path.addPolygon(points, false);
+    var paint = Paint()..color = color.value;
+    if (points.isEmpty) {
+      canvas.drawCircle(
+          Offset(size.width / 2, size.height / 2), size.width / 2, paint);
+    } else {
+      path.addPolygon(points, false);
 
-    canvas.drawPath(path, Paint()..color = color.value);
+      canvas.drawPath(path, paint);
+    }
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
+
+RefreshIndicator c;
