@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mokuteki_screening/creature.dart';
+import 'package:mokuteki_screening/creature_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
-        child: Creature(),
+        child: CreatureScreen(),
       ),
     );
   }
