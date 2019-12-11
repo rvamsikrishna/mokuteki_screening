@@ -2,15 +2,13 @@
 
 A new Flutter project.
 
-## Getting Started
+## Interactions
+1. Click on the circle to start/pause
+2. You can drag the creature horizontally
+3. Double-tap on the creature to change color
+4. Long press on creature to start/stop continuosly change colors
+5. When overlapped on the different colored particles falling from above the creature changes color to that particular color of the particle
 
-This project is a starting point for a Flutter application.
+This can further be worked on to convert it into a game with points and levels.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![ezgif com-crop (1)](https://user-images.githubusercontent.com/31307345/70620721-fcea0780-1c3d-11ea-8ec4-4d0987ab503d.gif)
